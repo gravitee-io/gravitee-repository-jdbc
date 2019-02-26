@@ -1,0 +1,8 @@
+databaseChangeLog:
+    - changeSet:
+        id: 1.24.0
+        author: GraviteeSource Team
+        changes:
+          - dropIndex:
+              indexName: idx_events_type
+              tableName: events
