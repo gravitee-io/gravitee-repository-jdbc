@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.gravitee.repository.jdbc.testcontainers;
+package io.gravitee.repository.jdbc.testcontainers.mssqlserver;
 
 import io.gravitee.repository.jdbc.AbstractJdbcTestRepositoryConfiguration;
+import io.gravitee.repository.jdbc.testcontainers.mssqlserver.MSSQLServerCondition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
-import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.containers.MSSQLServerContainer;
 
 import javax.inject.Inject;
 
@@ -27,21 +28,21 @@ import javax.inject.Inject;
  * @author Nicolas GERAUD (nicolas.geraud at graviteesource.com)
  * @author GraviteeSource Team
  */
-@Conditional(MariaDBCondition.class)
-public class MariaDBTestRepositoryConfiguration extends AbstractJdbcTestRepositoryConfiguration {
+@Conditional(MSSQLServerCondition.class)
+public class MSSQLServerTestRepositoryConfiguration extends AbstractJdbcTestRepositoryConfiguration {
 
     @Inject
-    private MariaDBContainer embeddedMariaDB;
+    private MSSQLServerContainer mssqlserver;
 
     @Override
     protected String getJdbcUrl() {
-        return getJdbcUrl(embeddedMariaDB);
+        return getJdbcUrl(mssqlserver);
     }
 
     @Bean(destroyMethod = "stop")
-    public MariaDBContainer embeddedMariaDB() {
-        MariaDBContainer container = new MariaDBContainer<>();
-        container.start();
-        return container;
+    public MSSQLServerContainer embeddedMSSQLServer() {
+        final MSSQLServerContainer mssqlserver = new MSSQLServerContainer();
+        mssqlserver.start();
+        return mssqlserver;
     }
 }

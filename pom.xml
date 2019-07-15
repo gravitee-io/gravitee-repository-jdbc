@@ -307,39 +307,124 @@
                                     <skip>true</skip>
                                 </configuration>
                             </execution>
+
+                            <!-- Postgres -->
                             <execution>
-                                <id>postgresql</id>
+                                <id>postgres9</id>
                                 <goals>
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
                                     <systemPropertyVariables>
-                                        <jdbcType>postgresql-tc</jdbcType>
+                                        <jdbcType>postgres9-tc</jdbcType>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>mysql</id>
+                                <id>postgres10</id>
                                 <goals>
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
                                     <systemPropertyVariables>
-                                        <jdbcType>mysql-tc</jdbcType>
+                                        <jdbcType>postgres10-tc</jdbcType>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>mariadb</id>
+                                <id>postgres11</id>
                                 <goals>
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
                                     <systemPropertyVariables>
-                                        <jdbcType>mariadb-tc</jdbcType>
+                                        <jdbcType>postgres11-tc</jdbcType>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>
+
+                            <!-- MySQL -->
+                            <execution>
+                                <id>mysql56</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemPropertyVariables>
+                                        <jdbcType>mysql56-tc</jdbcType>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>mysql57</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemPropertyVariables>
+                                        <jdbcType>mysql57-tc</jdbcType>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>mysql80</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemPropertyVariables>
+                                        <jdbcType>mysql80-tc</jdbcType>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+
+                            <!-- MariaDB -->
+                            <execution>
+                                <id>mariadb101</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemPropertyVariables>
+                                        <jdbcType>mariadb101-tc</jdbcType>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>mariadb102</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemPropertyVariables>
+                                        <jdbcType>mariadb102-tc</jdbcType>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>mariadb103</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemPropertyVariables>
+                                        <jdbcType>mariadb103-tc</jdbcType>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>mariadb104</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemPropertyVariables>
+                                        <jdbcType>mariadb104-tc</jdbcType>
+                                    </systemPropertyVariables>
+                                </configuration>
+                            </execution>
+
+                            <!-- Microsoft SQL Server -->
                             <execution>
                                 <id>sqlserver</id>
                                 <goals>

@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.gravitee.repository.jdbc.testcontainers;
+package io.gravitee.repository.jdbc.testcontainers.postgres;
 
 import io.gravitee.repository.jdbc.AbstractJdbcTestRepositoryConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
-import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 import javax.inject.Inject;
 
@@ -27,21 +27,22 @@ import javax.inject.Inject;
  * @author Nicolas GERAUD (nicolas.geraud at graviteesource.com)
  * @author GraviteeSource Team
  */
-@Conditional(MySQLCondition.class)
-public class MySQLTestRepositoryConfiguration extends AbstractJdbcTestRepositoryConfiguration {
+@Conditional(PostgreSQL10Condition.class)
+public class PostgreSQL10TestRepositoryConfiguration extends AbstractJdbcTestRepositoryConfiguration {
 
     @Inject
-    private MySQLContainer embeddedMysql;
+    private PostgreSQLContainer embeddedPostgres;
 
     @Override
     protected String getJdbcUrl() {
-        return getJdbcUrl(embeddedMysql);
+        return getJdbcUrl(embeddedPostgres);
     }
 
     @Bean(destroyMethod = "stop")
-    public MySQLContainer embeddedMysql() {
-        MySQLContainer container = new MySQLContainer<>();
-        container.start();
-        return container;
+    public PostgreSQLContainer embeddedPostgres() {
+        System.out.println("Start Postgres 10");
+        PostgreSQLContainer postgres = new PostgreSQLContainer<>("postgres:10");
+        postgres.start();
+        return postgres;
     }
 }

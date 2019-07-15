@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.gravitee.repository.jdbc.testcontainers;
+package io.gravitee.repository.jdbc.testcontainers.postgres;
 
 import io.gravitee.repository.jdbc.AbstractJdbcTestRepositoryConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
-import org.testcontainers.containers.MSSQLServerContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 import javax.inject.Inject;
 
@@ -27,21 +27,22 @@ import javax.inject.Inject;
  * @author Nicolas GERAUD (nicolas.geraud at graviteesource.com)
  * @author GraviteeSource Team
  */
-@Conditional(MSSQLServerCondition.class)
-public class MSSQLServerTestRepositoryConfiguration extends AbstractJdbcTestRepositoryConfiguration {
+@Conditional(PostgreSQL9Condition.class)
+public class PostgreSQL9TestRepositoryConfiguration extends AbstractJdbcTestRepositoryConfiguration {
 
     @Inject
-    private MSSQLServerContainer mssqlserver;
+    private PostgreSQLContainer embeddedPostgres;
 
     @Override
     protected String getJdbcUrl() {
-        return getJdbcUrl(mssqlserver);
+        return getJdbcUrl(embeddedPostgres);
     }
 
     @Bean(destroyMethod = "stop")
-    public MSSQLServerContainer embeddedMSSQLServer() {
-        final MSSQLServerContainer mssqlserver = new MSSQLServerContainer();
-        mssqlserver.start();
-        return mssqlserver;
+    public PostgreSQLContainer embeddedPostgres() {
+        System.out.println("Start Postgres 9");
+        PostgreSQLContainer postgres = new PostgreSQLContainer<>("postgres:9");
+        postgres.start();
+        return postgres;
     }
 }

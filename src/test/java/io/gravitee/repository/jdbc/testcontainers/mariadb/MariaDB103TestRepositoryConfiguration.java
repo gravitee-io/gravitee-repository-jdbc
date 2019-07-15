@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.gravitee.repository.jdbc.testcontainers;
+package io.gravitee.repository.jdbc.testcontainers.mariadb;
 
 import io.gravitee.repository.jdbc.AbstractJdbcTestRepositoryConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.MariaDBContainer;
 
 import javax.inject.Inject;
 
@@ -27,21 +27,22 @@ import javax.inject.Inject;
  * @author Nicolas GERAUD (nicolas.geraud at graviteesource.com)
  * @author GraviteeSource Team
  */
-@Conditional(PostgreSQLCondition.class)
-public class PostgreSQLTestRepositoryConfiguration extends AbstractJdbcTestRepositoryConfiguration {
+@Conditional(MariaDB103Condition.class)
+public class MariaDB103TestRepositoryConfiguration extends AbstractJdbcTestRepositoryConfiguration {
 
     @Inject
-    private PostgreSQLContainer embeddedPostgres;
+    private MariaDBContainer embeddedMariaDB;
 
     @Override
     protected String getJdbcUrl() {
-        return getJdbcUrl(embeddedPostgres);
+        return getJdbcUrl(embeddedMariaDB);
     }
 
     @Bean(destroyMethod = "stop")
-    public PostgreSQLContainer embeddedPostgres() {
-        PostgreSQLContainer postgres = new PostgreSQLContainer<>();
-        postgres.start();
-        return postgres;
+    public MariaDBContainer embeddedMariaDB() {
+        System.out.println("Start Mariadb 10.3");
+        MariaDBContainer container = new MariaDBContainer<>("mariadb:10.3");
+        container.start();
+        return container;
     }
 }
