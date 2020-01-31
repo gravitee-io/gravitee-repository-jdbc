@@ -340,6 +340,11 @@ databaseChangeLog:
                   type: nvarchar(32)
                   constraints:
                     nullable: true
+              - column:
+                  name: order
+                  type: integer
+                  constraints:
+                    nullable: true
         - sql:
             sql: update identity_providers set reference_type='ENVIRONMENT', reference_id='DEFAULT'
         - addNotNullConstraint:
