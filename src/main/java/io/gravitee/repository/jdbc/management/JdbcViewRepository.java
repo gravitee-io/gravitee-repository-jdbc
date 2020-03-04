@@ -15,13 +15,22 @@
  */
 package io.gravitee.repository.jdbc.management;
 
+import io.gravitee.repository.exceptions.TechnicalException;
+import io.gravitee.repository.jdbc.common.AbstractJdbcRepositoryConfiguration;
 import io.gravitee.repository.jdbc.orm.JdbcObjectMapper;
 import io.gravitee.repository.management.api.ViewRepository;
+import io.gravitee.repository.management.model.Group;
+import io.gravitee.repository.management.model.Role;
+import io.gravitee.repository.management.model.RoleScope;
 import io.gravitee.repository.management.model.View;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Types;
-import java.util.Date;
+import java.util.*;
+
+import static io.gravitee.repository.jdbc.common.AbstractJdbcRepositoryConfiguration.escapeReservedWord;
 
 /**
  *
@@ -30,8 +39,11 @@ import java.util.Date;
 @Repository
 public class JdbcViewRepository extends JdbcAbstractCrudRepository<View, String> implements ViewRepository {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(JdbcViewRepository.class);
+
     private static final JdbcObjectMapper ORM = JdbcObjectMapper.builder(View.class, "views", "id")
             .addColumn("id", Types.NVARCHAR, String.class)
+            .addColumn("key", Types.NVARCHAR, String.class)
             .addColumn("name", Types.NVARCHAR, String.class)
             .addColumn("description", Types.NVARCHAR, String.class)
             .addColumn("default_view", Types.BIT, boolean.class)
@@ -53,4 +65,18 @@ public class JdbcViewRepository extends JdbcAbstractCrudRepository<View, String>
         return item.getId();
     }
 
+    @Override
+    public Optional<View> findByKey(String key) throws TechnicalException {
+        LOGGER.debug("JdbcViewRepository.findByKey({})", key);
+        try {
+            final Optional<View> view = jdbcTemplate.query(
+                    "select * from views where " + escapeReservedWord("key") + " = ?", ORM.getRowMapper(), key)
+                    .stream().findFirst();
+            return view;
+        } catch (final Exception ex) {
+            final String error = "Failed to find view by key " + key;
+            LOGGER.error(error, ex);
+            throw new TechnicalException(error, ex);
+        }
+    }
 }
