@@ -107,7 +107,8 @@ public class JdbcTestRepositoryInitializer implements TestRepositoryInitializer 
             "workflows",
             "quality_rules",
             "api_quality_rules",
-            "dashboards"
+            "dashboards",
+            "alert_events"
     );
 
     private static final List<String> tablesToDrop = concatenate(tablesToTruncate
