@@ -169,6 +169,25 @@ public class JdbcMembershipRepository implements MembershipRepository {
     }
 
     @Override
+    public void deleteMembers(MembershipReferenceType referenceType, String referenceId) throws TechnicalException {
+        LOGGER.debug("JdbcMembershipRepository.deleteMembers({}, {})", referenceType, referenceId);
+        try {
+            jdbcTemplate.update("delete from memberships where reference_type = ? and reference_id = ? "
+                    , referenceType.name()
+                    , referenceId
+            );
+            jdbcTemplate.update("delete from membership_roles where reference_id = ? and reference_type = ?"
+                    , referenceType.name()
+                    , referenceId
+            );
+        } catch (final Exception ex) {
+            LOGGER.error("Failed to delete memberships", ex);
+            throw new TechnicalException("Failed to delete memberships", ex);
+        }
+
+    }
+
+    @Override
     public Optional<Membership> findById(String userId, MembershipReferenceType referenceType, String referenceId) throws TechnicalException {
         LOGGER.debug("JdbcMembershipRepository.findById({}, {}, {})", userId, referenceType, referenceId);
         try {
