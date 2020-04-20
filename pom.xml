@@ -41,8 +41,8 @@
         <mysql-connector-java.version>8.0.15</mysql-connector-java.version>
         <postgresql.version>42.2.5</postgresql.version>
         <mariaDB.version>2.3.0</mariaDB.version>
-        <wix-embedded-mysql.version>4.1.2</wix-embedded-mysql.version>
-        <postgresql-embedded.version>2.9</postgresql-embedded.version>
+        <wix-embedded-mysql.version>4.6.1</wix-embedded-mysql.version>
+        <postgresql-embedded.version>2.10</postgresql-embedded.version>
         <testcontainers.version>1.11.1</testcontainers.version>
         <default-database.jdbcType>postgresql-te</default-database.jdbcType>
     </properties>
