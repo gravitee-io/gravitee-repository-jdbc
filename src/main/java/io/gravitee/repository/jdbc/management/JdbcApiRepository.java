@@ -218,7 +218,7 @@ public class JdbcApiRepository extends JdbcAbstractPageableRepository<Api> imple
                 new JdbcHelper.CollatingRowMapper<>(ORM.getRowMapper(), CHILD_ADDER, "id");
 
         String projection ="av.*, a.id, a.name, a.description, a.version, a.deployed_at, a.created_at, a.updated_at, " +
-                "a.visibility, a.lifecycle_state, a.picture";
+                "a.visibility, a.lifecycle_state";
 
         if (apiFieldExclusionFilter == null || !apiFieldExclusionFilter.isDefinition()) {
             projection += ", a.definition";
@@ -227,7 +227,8 @@ public class JdbcApiRepository extends JdbcAbstractPageableRepository<Api> imple
             projection += ", a.picture";
         }
 
-        final StringBuilder sbQuery = new StringBuilder("select ").append(projection).append(" from apis a ");
+        // distinct is necessary because of the left join
+        final StringBuilder sbQuery = new StringBuilder("select distinct ").append(projection).append(" from apis a ");
         sbQuery.append("left join api_views av on a.id = av.api_id ");
 
         if (apiCriteria != null) {
