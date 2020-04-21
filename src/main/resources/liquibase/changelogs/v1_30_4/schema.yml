@@ -1,0 +1,11 @@
+databaseChangeLog:
+    - changeSet:
+        id: 1.30.4
+        author: GraviteeSource Team
+        changes:
+        - addColumn:
+            tableName: identity_providers
+            columns:
+                - column:
+                    name: sync_mappings
+                    type: boolean
