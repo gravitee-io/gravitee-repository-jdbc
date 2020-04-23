@@ -9,3 +9,9 @@ databaseChangeLog:
                 - column:
                     name: sync_mappings
                     type: boolean
+        - addColumn:
+              tableName: memberships
+              columns:
+                  - column:
+                        name: source
+                        type: nvarchar(64)
