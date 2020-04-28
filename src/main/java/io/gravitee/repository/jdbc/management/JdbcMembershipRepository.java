@@ -35,6 +35,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.*;
 
+import static io.gravitee.repository.jdbc.common.AbstractJdbcRepositoryConfiguration.escapeReservedWord;
 import static io.gravitee.repository.jdbc.management.JdbcHelper.AND_CLAUSE;
 import static io.gravitee.repository.jdbc.management.JdbcHelper.WHERE_CLAUSE;
 import static java.lang.String.format;
@@ -56,6 +57,7 @@ public class JdbcMembershipRepository implements MembershipRepository {
                     + " user_id = ?"
                     + " , reference_type = ?"
                     + " , reference_id = ?"
+                    + " , " + escapeReservedWord("source") + " = ?"
                     + " , created_at = ? "
                     + " , updated_at = ? "
                     + WHERE_CLAUSE
@@ -66,6 +68,7 @@ public class JdbcMembershipRepository implements MembershipRepository {
             .addColumn("user_id", Types.NVARCHAR, String.class)
             .addColumn("reference_type", Types.NVARCHAR, MembershipReferenceType.class)
             .addColumn("reference_id", Types.NVARCHAR, String.class)
+            .addColumn("source", Types.NVARCHAR, String.class)
             .addColumn("created_at", Types.TIMESTAMP, Date.class)
             .addColumn("updated_at", Types.TIMESTAMP, Date.class)
             .build();
@@ -192,7 +195,7 @@ public class JdbcMembershipRepository implements MembershipRepository {
         LOGGER.debug("JdbcMembershipRepository.findById({}, {}, {})", userId, referenceType, referenceId);
         try {
             final List<Membership> memberships = jdbcTemplate.query("select"
-                            + " user_id, reference_type, reference_id, created_at, updated_at "
+                            + " user_id, reference_type, reference_id, " + escapeReservedWord("source") + ", created_at, updated_at "
                             + " from memberships where user_id = ? and reference_type = ? and reference_id = ?"
                     , ORM.getRowMapper()
                     , userId
@@ -212,7 +215,7 @@ public class JdbcMembershipRepository implements MembershipRepository {
     @Override
     public Set<Membership> findByIds(String userId, MembershipReferenceType referenceType, Set<String> referenceIds) throws TechnicalException {
         LOGGER.debug("JdbcMembershipRepository.findByIds({}, {}, {})", userId, referenceType, referenceIds);
-        final StringBuilder query = new StringBuilder("select user_id, reference_type, reference_id, created_at, updated_at "
+        final StringBuilder query = new StringBuilder("select user_id, reference_type, reference_id, " + escapeReservedWord("source") + ", created_at, updated_at "
                 + " from memberships where user_id = ? and reference_type = ?");
         ORM.buildInCondition(false, query, "reference_id", referenceIds);
         try {
@@ -238,7 +241,7 @@ public class JdbcMembershipRepository implements MembershipRepository {
     @Override
     public Set<Membership> findByReferenceAndRole(MembershipReferenceType referenceType, String referenceId, RoleScope roleScope, String roleName) throws TechnicalException {
         LOGGER.debug("JdbcMembershipRepository.findByReferenceAndRole({}, {}, {}, {})", referenceType, referenceId, roleScope, roleName);
-        final StringBuilder query = new StringBuilder("select m.user_id, m.reference_type, m.reference_id, m.created_at, m.updated_at "
+        final StringBuilder query = new StringBuilder("select m.user_id, m.reference_type, m.reference_id, m." + escapeReservedWord("source") + ", m.created_at, m.updated_at "
                 + " from memberships m"
                 + " left join membership_roles mr on mr.user_id = m.user_id" +
                 " and mr.reference_type = m.reference_type and mr.reference_id = m.reference_id");
@@ -249,7 +252,7 @@ public class JdbcMembershipRepository implements MembershipRepository {
     @Override
     public Set<Membership> findByRole(RoleScope roleScope, String roleName) throws TechnicalException {
         LOGGER.debug("JdbcMembershipRepository.findByRole({}, {})", roleScope, roleName);
-        final StringBuilder query = new StringBuilder("select m.user_id, m.reference_type, m.reference_id, m.created_at, m.updated_at "
+        final StringBuilder query = new StringBuilder("select m.user_id, m.reference_type, m.reference_id, m." + escapeReservedWord("source") + ", m.created_at, m.updated_at "
                 + " from memberships m"
                 + " left join membership_roles mr on mr.user_id = m.user_id" +
                 " and mr.reference_type = m.reference_type and mr.reference_id = m.reference_id");
@@ -285,7 +288,7 @@ public class JdbcMembershipRepository implements MembershipRepository {
     public Set<Membership> findByReferencesAndRole(MembershipReferenceType referenceType, List<String> referenceIds, RoleScope roleScope, String roleName) throws TechnicalException {
         LOGGER.debug("JdbcMembershipRepository.findByReferencesAndRole({}, {}, {}, {})", referenceType, referenceIds, roleScope, roleName);
         try {
-            StringBuilder query = new StringBuilder("select m.user_id, m.reference_type, m.reference_id, m.created_at, m.updated_at "
+            StringBuilder query = new StringBuilder("select m.user_id, m.reference_type, m.reference_id, m." + escapeReservedWord("source") + ", m.created_at, m.updated_at "
                     + " from memberships m "
                     + " left join membership_roles mr on mr.user_id = m.user_id and mr.reference_type = m.reference_type and mr.reference_id = m.reference_id");
             boolean first = true;
@@ -334,7 +337,7 @@ public class JdbcMembershipRepository implements MembershipRepository {
         LOGGER.debug("JdbcMembershipRepository.findByUserAndReferenceTypeAndRole({}, {}, {}, {})", userId, referenceType, roleScope, roleName);
         try {
             final StringBuilder query = new StringBuilder("select "
-                    + " m.user_id, m.reference_type, m.reference_id, m.created_at, m.updated_at "
+                    + " m.user_id, m.reference_type, m.reference_id, m." + escapeReservedWord("source") + ", m.created_at, m.updated_at "
                     + " from memberships m "
                     + " left join membership_roles mr on mr.user_id = m.user_id and mr.reference_type = m.reference_type and mr.reference_id = m.reference_id");
             boolean first = true;
@@ -394,7 +397,7 @@ public class JdbcMembershipRepository implements MembershipRepository {
         LOGGER.debug("JdbcMembershipRepository.findByUserAndReferenceType({}, {}, {})", userId, referenceType);
         try {
             final String query = "select "
-                    + " user_id, reference_type, reference_id, created_at, updated_at "
+                    + " user_id, reference_type, reference_id, " + escapeReservedWord("source") + ", created_at, updated_at "
                     + " from memberships where user_id = ? and reference_type = ? ";
             return queryAndAddRoles(userId, referenceType, null, null, query);
         } catch (final Exception ex) {
@@ -408,7 +411,7 @@ public class JdbcMembershipRepository implements MembershipRepository {
         LOGGER.debug("JdbcMembershipRepository.findByUser({})", userId);
         try {
             final String query = "select "
-                    + " user_id, reference_type, reference_id, created_at, updated_at "
+                    + " user_id, reference_type, reference_id, " + escapeReservedWord("source") + ", created_at, updated_at "
                     + " from memberships where user_id = ? ";
             return queryAndAddRoles(userId, null, null, null, query);
         } catch (final Exception ex) {

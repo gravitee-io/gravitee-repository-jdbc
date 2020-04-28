@@ -66,4 +66,6 @@ databaseChangeLog:
   - include:
     - file: liquibase/changelogs/v1_30_6/schema.yml
   - include:
+    - file: liquibase/changelogs/v1_30_4/schema.yml
+  - include:
     - file: liquibase/changelogs/v3_0_0/schema.yml
