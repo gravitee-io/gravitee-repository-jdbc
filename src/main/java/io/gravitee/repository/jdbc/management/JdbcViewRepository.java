@@ -51,7 +51,7 @@ public class JdbcViewRepository implements ViewRepository {
 
     private static final JdbcObjectMapper ORM = JdbcObjectMapper.builder(View.class, "views", "id")
             .addColumn("id", Types.NVARCHAR, String.class)
-            .addColumn("environment", Types.NVARCHAR, String.class)
+            .addColumn("environment_id", Types.NVARCHAR, String.class)
             .addColumn("key", Types.NVARCHAR, String.class)
             .addColumn("name", Types.NVARCHAR, String.class)
             .addColumn("description", Types.NVARCHAR, String.class)
@@ -65,12 +65,12 @@ public class JdbcViewRepository implements ViewRepository {
             .build();
 
     @Override
-    public Set<View> findAllByEnvironment(String environment) throws TechnicalException {
-        LOGGER.debug("JdbcViewRepository.findAllByEnvironment({})", environment);
+    public Set<View> findAllByEnvironment(String environmentId) throws TechnicalException {
+        LOGGER.debug("JdbcViewRepository.findAllByEnvironment({})", environmentId);
         try {
-            List<View> views = jdbcTemplate.query("select * from views where environment = ?"
+            List<View> views = jdbcTemplate.query("select * from views where environment_id = ?"
                     , ORM.getRowMapper()
-                    , environment
+                    , environmentId
             );
             return new HashSet<>(views);
         } catch (final Exception ex) {
@@ -80,18 +80,17 @@ public class JdbcViewRepository implements ViewRepository {
     }
 
     @Override
-    public Optional<View> findById(String id, String environment) throws TechnicalException {
-        LOGGER.debug("JdbcViewRepository.findById({}, {})", id, environment);
+    public Optional<View> findById(String id) throws TechnicalException {
+        LOGGER.debug("JdbcViewRepository.findById({})", id);
         try {
-            List<View> items = jdbcTemplate.query("select * from views where id = ? and environment = ?"
+            List<View> items = jdbcTemplate.query("select * from views where id = ?"
                     , ORM.getRowMapper()
                     , id
-                    , environment
             );
             return items.stream().findFirst();
         } catch (final Exception ex) {
-            LOGGER.error("Failed to find views items by id and environment: {} - {}", id, environment, ex);
-            throw new TechnicalException("Failed to find views items by id and environment : " + id + " - " + environment, ex);
+            LOGGER.error("Failed to find views items by id : {} ", id, ex);
+            throw new TechnicalException("Failed to find views items by id : " + id, ex);
         }
     }
 
@@ -100,7 +99,7 @@ public class JdbcViewRepository implements ViewRepository {
         LOGGER.debug("JdbcViewRepository.create({})", item);
         try {
             jdbcTemplate.update(ORM.buildInsertPreparedStatementCreator(item));
-            return findById(item.getId(), item.getEnvironment()).orElse(null);
+            return findById(item.getId()).orElse(null);
         } catch (final Exception ex) {
             LOGGER.error("Failed to create views item:", ex);
             throw new TechnicalException("Failed to create views item.", ex);
@@ -116,7 +115,8 @@ public class JdbcViewRepository implements ViewRepository {
         try {
             int rows = jdbcTemplate.update("update views set "
                                         + " id = ?"
-                                        + " , environment = ?"
+                                        + " , environment_id = ?"
+                                        + " , " + escapeReservedWord("key") + " = ?"
                                         + " , name = ?"
                                         + " , description = ?"
                                         + " , default_view = ?"
@@ -128,10 +128,11 @@ public class JdbcViewRepository implements ViewRepository {
                                         + " , updated_at = ? "
                                         + " where "
                                         + " id = ? "
-                                        + " and environment = ? "
+                                        + " and environment_id = ? "
 
                                 , item.getId()
-                                , item.getEnvironment()
+                                , item.getEnvironmentId()
+                                , item.getKey()
                                 , item.getName()
                                 , item.getDescription()
                                 , item.isDefaultView()
@@ -142,12 +143,12 @@ public class JdbcViewRepository implements ViewRepository {
                                 , item.getCreatedAt()
                                 , item.getUpdatedAt()
                                 , item.getId()
-                                , item.getEnvironment()
+                                , item.getEnvironmentId()
                         );
             if (rows == 0) {
-                throw new IllegalStateException("Unable to update views " + item.getId() + " for the environment " + item.getEnvironment());
+                throw new IllegalStateException("Unable to update views " + item.getId() + " for the environment " + item.getEnvironmentId());
             } else {
-                return findById(item.getId(), item.getEnvironment()).orElse(null);
+                return findById(item.getId()).orElse(null);
             }
         } catch (IllegalStateException ex) {
             throw ex;
@@ -158,10 +159,10 @@ public class JdbcViewRepository implements ViewRepository {
     }
 
     @Override
-    public void delete(String id, String environment) throws TechnicalException {
-        LOGGER.debug("JdbcViewRepository.delete({}, {})", id, environment);
+    public void delete(String id) throws TechnicalException {
+        LOGGER.debug("JdbcViewRepository.delete({})", id);
         try {
-            jdbcTemplate.update("delete from views where id = ? and environment = ?", id, environment);
+            jdbcTemplate.update("delete from views where id = ?", id);
         } catch (final Exception ex) {
             LOGGER.error("Failed to delete views item:", ex);
             throw new TechnicalException("Failed to delete views item", ex);
@@ -186,7 +187,7 @@ public class JdbcViewRepository implements ViewRepository {
         LOGGER.debug("JdbcViewRepository.findByKey({},{})", key, environment);
         try {
             final Optional<View> view = jdbcTemplate.query(
-                    "select * from views where " + escapeReservedWord("key") + " = ? and environment = ?", ORM.getRowMapper(), key, environment)
+                    "select * from views where " + escapeReservedWord("key") + " = ? and environment_id = ?", ORM.getRowMapper(), key, environment)
                     .stream().findFirst();
             return view;
         } catch (final Exception ex) {

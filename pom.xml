@@ -275,7 +275,7 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
-                            <skip>true</skip>
+                            <skip>false</skip>
                             <systemPropertyVariables>
                                 <jdbcType>${default-database.jdbcType}</jdbcType>
                             </systemPropertyVariables>
