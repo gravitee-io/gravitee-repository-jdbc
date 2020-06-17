@@ -109,6 +109,7 @@ public class JdbcTestRepositoryInitializer implements TestRepositoryInitializer 
             "api_quality_rules",
             "dashboards",
             "alert_events",
+            "alert_event_rules",
             "tokens"
     );
 
