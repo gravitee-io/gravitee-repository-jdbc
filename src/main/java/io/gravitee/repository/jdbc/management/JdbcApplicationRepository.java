@@ -55,6 +55,7 @@ public class JdbcApplicationRepository extends JdbcAbstractCrudRepository<Applic
             .addColumn("created_at", Types.TIMESTAMP, Date.class)
             .addColumn("updated_at", Types.TIMESTAMP, Date.class)
             .addColumn(STATUS_FIELD, Types.NVARCHAR, ApplicationStatus.class)
+            .addColumn("disable_membership_notifications", Types.BIT, boolean.class)
             .build();
 
     private static final JdbcHelper.ChildAdder<Application> CHILD_ADDER = (Application parent, ResultSet rs) -> {
