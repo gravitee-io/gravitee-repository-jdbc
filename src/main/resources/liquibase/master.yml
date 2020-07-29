@@ -71,3 +71,5 @@ databaseChangeLog:
     - file: liquibase/changelogs/v1_30_13/schema.yml
   - include:
     - file: liquibase/changelogs/v1_30_13/schema-alerts.yml
+  - include:
+    - file: liquibase/changelogs/v1_30_17/schema.yml
