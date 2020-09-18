@@ -68,6 +68,7 @@ public class JdbcApiRepository extends JdbcAbstractPageableRepository<Api> imple
             .addColumn("api_lifecycle_state", Types.NVARCHAR, ApiLifecycleState.class)
             .addColumn("disable_membership_notifications", Types.BIT, boolean.class)
             .addColumn("background", Types.NVARCHAR, String.class)
+            .addColumn("definition_version", Types.INTEGER, Integer.class)
             .build();
 
     private static final JdbcHelper.ChildAdder<Api> CHILD_ADDER = (Api parent, ResultSet rs) -> {

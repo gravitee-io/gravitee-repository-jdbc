@@ -87,6 +87,11 @@ databaseChangeLog:
             columnNames: key, reference_type, reference_id
             tableName: custom_user_fields
 
+        - addColumn:
+            tableName: apis
+            columns:
+              - column: {name: definition_version, type: int, constraints: { nullable: true } }
+
         - createIndex:
             indexName: idx_custom_user_fields_by_ref
             columns:
@@ -132,4 +137,5 @@ databaseChangeLog:
             constraintName: pk_page_attached_media
             columnNames: page_id, media_hash, media_name, attached_at
             tableName: page_attached_media
+
 
