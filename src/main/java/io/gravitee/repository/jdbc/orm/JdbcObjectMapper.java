@@ -21,7 +21,6 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Reader;
@@ -38,7 +37,7 @@ import static io.gravitee.repository.jdbc.management.JdbcHelper.WHERE_CLAUSE;
 import static io.gravitee.repository.jdbc.orm.JdbcColumn.getDBName;
 import static java.lang.Byte.parseByte;
 import static java.util.Collections.emptyList;
-import static org.springframework.util.StringUtils.isEmpty;
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  *
@@ -289,7 +288,7 @@ public class JdbcObjectMapper<T> {
         LOGGER.trace("Converted {}.{} from {} to {}", getDBName(item.getClass().getSimpleName()), getDBName(column.name), value, value);
         if (column.javaType.isEnum() && (value instanceof String)) {
             final String stringValue = (String) value;
-            if (isEmpty(stringValue)) {
+            if (!hasText(stringValue)) {
                 return null;
             } else {
                 return Enum.valueOf(column.javaType, stringValue);

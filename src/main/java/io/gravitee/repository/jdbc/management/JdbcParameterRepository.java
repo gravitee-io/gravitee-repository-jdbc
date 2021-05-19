@@ -35,7 +35,7 @@ import java.util.Optional;
 
 import static io.gravitee.repository.jdbc.common.AbstractJdbcRepositoryConfiguration.escapeReservedWord;
 import static java.lang.String.format;
-import static org.springframework.util.StringUtils.isEmpty;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * @author njt

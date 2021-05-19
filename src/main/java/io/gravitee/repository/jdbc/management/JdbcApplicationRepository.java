@@ -329,13 +329,13 @@ public class JdbcApplicationRepository extends JdbcAbstractCrudRepository<Applic
             if (!isEmpty(applicationCriteria.getIds())) {
                 sbQuery.append("and a.id in (").append(getOrm().buildInClause(applicationCriteria.getIds())).append(") ");
             }
-            if (!StringUtils.isEmpty(applicationCriteria.getName())) {
+            if (StringUtils.hasText(applicationCriteria.getName())) {
                 sbQuery.append("and lower(a.name) like ? ");
             }
-            if (!StringUtils.isEmpty(applicationCriteria.getStatus())) {
+            if (applicationCriteria.getStatus() != null) {
                 sbQuery.append("and a.status = ? ");
             }
-            if (!StringUtils.isEmpty(applicationCriteria.getEnvironmentIds())) {
+            if (!isEmpty(applicationCriteria.getEnvironmentIds())) {
                 sbQuery.append("and a.environment_id in (").append(getOrm().buildInClause(applicationCriteria.getEnvironmentIds())).append(") ");
             }
         }
@@ -347,10 +347,10 @@ public class JdbcApplicationRepository extends JdbcAbstractCrudRepository<Applic
                         if (!isEmpty(applicationCriteria.getIds())) {
                             lastIndex = getOrm().setArguments(ps, applicationCriteria.getIds(), lastIndex);
                         }
-                        if (!StringUtils.isEmpty(applicationCriteria.getName())) {
+                        if (StringUtils.hasText(applicationCriteria.getName())) {
                             ps.setString(lastIndex++, "%" + applicationCriteria.getName().toLowerCase() + "%");
                         }
-                        if (!StringUtils.isEmpty(applicationCriteria.getStatus())) {
+                        if (applicationCriteria.getStatus() != null) {
                             ps.setString(lastIndex++, applicationCriteria.getStatus().name());
                         }
                         if (!isEmpty(applicationCriteria.getEnvironmentIds())) {

@@ -23,7 +23,7 @@
     <parent>
         <groupId>io.gravitee</groupId>
         <artifactId>gravitee-parent</artifactId>
-        <version>19.2.1</version>
+        <version>20.0</version>
     </parent>
 
     <groupId>io.gravitee.repository</groupId>
@@ -32,6 +32,7 @@
     <name>Gravitee.io APIM - Repository - JDBC</name>
 
     <properties>
+        <gravitee-bom.version>1.1-SNAPSHOT</gravitee-bom.version>
         <gravitee-repository.version>3.10.0-SNAPSHOT</gravitee-repository.version>
         <gravitee-repository-test.version>3.10.0-SNAPSHOT</gravitee-repository-test.version>
         <gravitee-definition.version>1.25.0</gravitee-definition.version>
@@ -48,6 +49,18 @@
         <default-database.jdbcType>postgresql-te</default-database.jdbcType>
         <mssql-jdbc.version>7.4.1.jre8</mssql-jdbc.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.gravitee</groupId>
+                <artifactId>gravitee-bom</artifactId>
+                <version>${gravitee-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- Gravitee dependencies -->
@@ -80,7 +93,7 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.23</version>
+            <version>1.26</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -98,7 +111,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -106,21 +118,18 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>${spring.version}</version>
         </dependency>
 
         <!--  Logging -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
             <scope>provided</scope>
         </dependency>
 

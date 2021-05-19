@@ -108,7 +108,7 @@ public class JdbcSubscriptionRepository extends JdbcAbstractCrudRepository<Subsc
             argsList.add(new Date(criteria.getTo()));
             started = true;
         }
-        if (!StringUtils.isEmpty(criteria.getClientId())) {
+        if (StringUtils.hasText(criteria.getClientId())) {
             builder.append(started ? AND_CLAUSE : WHERE_CLAUSE);
             builder.append("client_id = ?");
             argsList.add(criteria.getClientId());
