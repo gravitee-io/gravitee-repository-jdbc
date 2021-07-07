@@ -45,7 +45,7 @@ public class JdbcPlanRepository extends TransactionalRepository implements PlanR
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    
+
     private static final JdbcObjectMapper ORM = JdbcObjectMapper.builder(Plan.class, "plans", "id")
             .addColumn("id", Types.NVARCHAR, String.class)
             .addColumn("type", Types.NVARCHAR, Plan.PlanType.class)
@@ -68,25 +68,25 @@ public class JdbcPlanRepository extends TransactionalRepository implements PlanR
             .addColumn("selection_rule", Types.NVARCHAR, String.class)
             .addColumn("general_conditions", Types.NVARCHAR, String.class)
             .build();
-    
+
     private void addTags(Plan parent) {
         List<String> tags = getTags(parent.getId());
         parent.setTags(new HashSet<>(tags));
     }
-    
+
     private void addCharacteristics(Plan parent) {
         List<String> characteristics = getCharacteristics(parent.getId());
         parent.setCharacteristics(characteristics);
     }
-    
-    private void addExcludedGroups(Plan parent) {        
+
+    private void addExcludedGroups(Plan parent) {
         List<String> excludedGroups = getExcludedGroups(parent.getId());
         parent.setExcludedGroups(excludedGroups);
     }
-        
+
     @Override
     public Optional<Plan> findById(String id) throws TechnicalException {
-        
+
         LOGGER.debug("JdbcPlanRepository.findById({})", id);
         try {
             List<Plan> plans = jdbcTemplate.query("select * from plans p where p.id = ?"
@@ -104,7 +104,6 @@ public class JdbcPlanRepository extends TransactionalRepository implements PlanR
             LOGGER.error("Failed to find plan by id:", ex);
             throw new TechnicalException("Failed to find plan by id", ex);
         }
-        
     }
 
     @Override
@@ -156,23 +155,23 @@ public class JdbcPlanRepository extends TransactionalRepository implements PlanR
             throw new TechnicalException("Failed to delete plan", ex);
         }
     }
-    
+
     private List<String> getTags(String planId) {
         LOGGER.debug("JdbcPlanRepository.getTags({})", planId);
         return jdbcTemplate.queryForList("select tag from plan_tags where plan_id = ?", String.class, planId);
     }
-    
+
     private List<String> getCharacteristics(String planId) {
         LOGGER.debug("JdbcPlanRepository.getCharacteristics({})", planId);
         return jdbcTemplate.queryForList("select characteristic from plan_characteristics where plan_id = ?", String.class, planId);
     }
-        
+
     private List<String> getExcludedGroups(String pageId) {
         return jdbcTemplate.query("select excluded_group from plan_excluded_groups where plan_id = ?"
                 , (ResultSet rs, int rowNum) -> rs.getString(1)
                 , pageId);
     }
-    
+
     private void storeCharacteristics(Plan plan, boolean deleteFirst) throws TechnicalException {
         LOGGER.debug("JdbcPlanRepository.storeApis({}, {})", plan, deleteFirst);
         try {
@@ -189,7 +188,7 @@ public class JdbcPlanRepository extends TransactionalRepository implements PlanR
             throw new TechnicalException("Failed to store characteristics", ex);
         }
     }
-    
+
     private void storeExcludedGroups(Plan plan, boolean deleteFirst) {
         if (deleteFirst) {
             jdbcTemplate.update("delete from plan_excluded_groups where plan_id = ?", plan.getId());
@@ -226,6 +225,26 @@ public class JdbcPlanRepository extends TransactionalRepository implements PlanR
         } catch (final Exception ex) {
             LOGGER.error("Failed to store tags:", ex);
             throw new TechnicalException("Failed to store tags", ex);
+        }
+    }
+
+    @Override
+    public List<Plan> findByApis(List<String> apiIds) throws TechnicalException {
+        LOGGER.debug("JdbcPlanRepository.findByApis({})", apiIds);
+        try {
+            List<Plan> plans = jdbcTemplate.query("select * from plans where api in (" + ORM.buildInClause(apiIds) + ")"
+                    , (PreparedStatement ps) -> ORM.setArguments(ps, apiIds, 1)
+                    , ORM.getRowMapper()
+            );
+            for (Plan plan : plans) {
+                addCharacteristics(plan);
+                addExcludedGroups(plan);
+                addTags(plan);
+            }
+            return plans;
+        } catch (final Exception ex) {
+            LOGGER.error("Failed to find plans by api:", ex);
+            throw new TechnicalException("Failed to find plans by api", ex);
         }
     }
 
